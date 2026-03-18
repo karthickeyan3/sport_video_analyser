@@ -1,0 +1,7 @@
+METRIC_NAME,DATA_SOURCE,CALCULATION_FORMULA,OPTIMAL_BENCHMARK
+SYMMETRY,Knee Angle L/R,"100 - (abs(Avg_Knee_R - Avg_Knee_L) * 2)","< 2.0 Degree Variance"
+DRIVE,Min Knee Angle,"(165 - Minimum_Knee_Angle) * 2","High Knee Flexion"
+POWER,Max Hip Angle,"(Maximum_Hip_Angle - 135) * 2.5","Full Hip Extension"
+CADENCE,SPM Frequency,"(Current_Cadence / 180) * 100","180 Steps Per Minute"
+EFFICIENCY,Vertical Oscillation,"100 - (Vertical_Range * 800)","5cm - 10cm Bounce"
+POSTURE,Body Lean Angle,"100 - (abs(Current_Lean - 8) * 6)","8 Degree Forward Lean"
