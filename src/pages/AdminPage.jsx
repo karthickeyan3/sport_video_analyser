@@ -21,6 +21,8 @@ const AVAILABLE_AI_KEYS = [
   { value: 'ankle_angle_l', label: 'Ankle Angle (L)' },
   { value: 'body_lean', label: 'Body Lean' },
   { value: 'v_velocity', label: 'Vertical Velocity' },
+  { value: 'h_velocity', label: 'Horizontal Velocity' },
+  { value: 'speed', label: 'Total Speed' },
   { value: 'vert_osc', label: 'Vertical Oscillation' },
   { value: 'stride_width', label: 'Stride Width' },
   { value: 'cadence', label: 'Cadence' },

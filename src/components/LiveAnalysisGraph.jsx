@@ -41,10 +41,16 @@ const AnimatedRadarChart = ({ history, sportConfig }) => {
         score = Math.max(0, 100 - diff * 2.5);
       } 
       else if (lbl.includes('POWER') || lbl.includes('LIFT') || lbl.includes('DRIVE')) {
+        const isJump = sportConfig.name.toLowerCase().includes('jump');
         const vel = getVal('v_velocity', 'max');
-        score = Math.min(100, (vel / 10) * 100);
+        score = Math.min(100, (vel / (isJump ? 3.5 : 10)) * 100);
       }
-      else if (lbl.includes('CADENCE')) {
+      else if (lbl.includes('SPEED')) {
+        const isJump = sportConfig.name.toLowerCase().includes('jump');
+        const vel = getVal('h_velocity', 'max');
+        score = Math.min(100, (vel / (isJump ? 9 : 12)) * 100);
+      }
+      else if (lbl.includes('CADENCE') || lbl.includes('RHYTHM')) {
         score = Math.min(100, (current.cadence / 180) * 100);
       }
       else if (lbl.includes('EFFICIENCY') || lbl.includes('AERO')) {

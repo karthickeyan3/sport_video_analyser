@@ -103,7 +103,49 @@ const DEFAULT_SPORTS_CONFIG = {
     radarLabels: ['LIFT', 'RELEASE', 'ALIGNMENT', 'POWER', 'FLUIDITY', 'BALANCE'],
     insights: {
       elbow_angle_r: { title: 'Shooting Pocket', desc: 'A 90° elbow angle at set point ensures consistent release.' },
-      v_velocity: { title: 'Explosiveness', desc: 'Measures vertical displacement speed during the jump.' }
+      v_velocity: { title: 'Explosiveness', desc: 'Measures vertical vertical displacement speed during the jump.' }
+    }
+  },
+  LONG_JUMP: {
+    name: 'Long Jump',
+    icon: 'TrendingUp',
+    primaryColor: '#f472b6',
+    metrics: [
+      { key: 'h_velocity', label: 'Approach Velocity', unit: 'm/s', min: 5.5, max: 8.5 },
+      { key: 'v_velocity', label: 'Take-off Lift', unit: 'm/s', min: 1.5, max: 3.2 },
+      { key: 'knee_angle_r', label: 'Take-off Knee Ext', unit: '°', min: 150, max: 180 },
+      { key: 'knee_angle_l', label: 'Lead Knee Flex', unit: '°', min: 85, max: 135 },
+      { key: 'hip_angle_r', label: 'Hip Extension', unit: '°', min: 155, max: 180 },
+      { key: 'body_lean', label: 'Take-off Angle', unit: '°', min: 16, max: 24 },
+      { key: 'arm_swing_r', label: 'Arm Drive (R)', unit: '°', min: 110, max: 175 },
+      { key: 'arm_swing_l', label: 'Arm Drive (L)', unit: '°', min: 110, max: 175 }
+    ],
+    radarLabels: ['SPEED', 'LIFT', 'DRIVE', 'FLIGHT', 'POSTURE', 'STABILITY'],
+    insights: {
+      h_velocity: { title: 'Junior Speed Zone', desc: 'Typical junior approach velocity ranges from 6.0 to 8.0 m/s.' },
+      body_lean: { title: 'Take-off Angle', desc: 'Focus on 18-20° to prevent crashing into the pit.' },
+      v_velocity: { title: 'Vertical Lift', desc: 'Conversion of run-up speed into vertical displacement.' }
+    }
+  },
+  TRIPLE_JUMP: {
+    name: 'Triple Long Jump',
+    icon: 'ChevronRight',
+    primaryColor: '#a855f7',
+    metrics: [
+      { key: 'h_velocity', label: 'Phase Velocity', unit: 'm/s', min: 5.0, max: 8.5 },
+      { key: 'v_velocity', label: 'Phase Lift', unit: 'm/s', min: 1.2, max: 3.0 },
+      { key: 'knee_angle_r', label: 'Impact Load (R)', unit: '°', min: 110, max: 160 },
+      { key: 'knee_angle_l', label: 'Impact Load (L)', unit: '°', min: 110, max: 160 },
+      { key: 'cadence', label: 'Phase Rhythm', unit: 'PPM', min: 70, max: 140 },
+      { key: 'body_lean', label: 'Trunk Stability', unit: '°', min: 0, max: 15 },
+      { key: 'ankle_angle_r', label: 'Landing Stability', unit: '°', min: 90, max: 145 },
+      { key: 'stride_width', label: 'Phase Spread', unit: 'cm', min: 60, max: 140 }
+    ],
+    radarLabels: ['SPEED', 'RHYTHM', 'STABILITY', 'LIFT', 'DRIVE', 'SYMMETRY'],
+    insights: {
+      cadence: { title: 'Junior Rhythm', desc: 'Consistency over magnitude: aim for even spacing in the hop-step-jump.' },
+      knee_angle_r: { title: 'Knee Resilience', desc: 'Developing leg strength to handle the phasal impact of the hop.' },
+      h_velocity: { title: 'Phase Momentum', desc: 'Try to maintain horizontal velocity during the Step phase.' }
     }
   }
 };
@@ -112,7 +154,9 @@ const getStoredConfig = () => {
   const stored = localStorage.getItem('SPORTS_CONFIG');
   if (stored) {
     try {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Merge DEFAULT into STORED to ensure new hardcoded sports appear even if localData exists
+      return { ...DEFAULT_SPORTS_CONFIG, ...parsed };
     } catch (e) {
       return DEFAULT_SPORTS_CONFIG;
     }
