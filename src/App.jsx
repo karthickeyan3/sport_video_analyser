@@ -29,7 +29,10 @@ function App() {
       case 'admin':
         return <AdminPage onBack={() => setCurrentPage('landing')} />
       default:
-        return <LandingPage onStart={() => setCurrentPage('login')} />
+        return <LandingPage onStart={(mode = 'user') => {
+          setLoginMode(mode);
+          setCurrentPage('login');
+        }} />
     }
   }
 

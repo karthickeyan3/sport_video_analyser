@@ -27,7 +27,7 @@ const LandingPage = ({ onStart }) => {
       }} />
 
       <header style={{ zIndex: 10, padding: '32px 0' }}>
-        <div className="max-width-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="max-width-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ 
               width: '40px', 
@@ -41,7 +41,7 @@ const LandingPage = ({ onStart }) => {
             }}>
               <Activity color="#050505" size={24} />
             </div>
-            <span style={{ fontSize: '1.5rem', fontWeight: 700, fontFamily: 'Outfit' }}>Sports Analysis<span style={{ color: 'var(--primary)' }}> AI</span></span>
+            <span style={{ fontSize: 'clamp(1.2rem, 5vw, 1.5rem)', fontWeight: 700, fontFamily: 'Outfit' }}>Sports Analysis<span style={{ color: 'var(--primary)' }}> AI</span></span>
           </div>
    {/*admin acess*/}
    <button 
@@ -79,12 +79,12 @@ const LandingPage = ({ onStart }) => {
               <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', lineHeight: 1.05, marginBottom: '24px' }} className="text-gradient">
                 Analyze Your Performance <br /> with Precision AI
               </h1>
-              <p style={{ fontSize: 'clamp(1rem, 2vw, 1.2rem)', color: 'rgba(255,255,255,0.6)', maxWidth: '700px', margin: '0 auto 48px', lineHeight: 1.6 }}>
+              <p style={{ fontSize: 'clamp(0.9rem, 4vw, 1.2rem)', color: 'rgba(255,255,255,0.6)', maxWidth: '700px', margin: '0 auto 48px', lineHeight: 1.6, padding: '0 16px', boxSizing: 'border-box' }}>
                 Track biomechanics, joint angles, and movement efficiency in real-time. 
                 Upload your footage and get professional-grade insights instantly.
               </p>
 
-              <button onClick={onStart} className="glow-btn" style={{ padding: '24px 80px', fontSize: '1.2rem', borderRadius: '100px', margin: '0 auto' }}>
+              <button onClick={onStart} className="glow-btn" style={{ padding: 'clamp(16px, 4vw, 24px) clamp(32px, 8vw, 80px)', fontSize: 'clamp(1rem, 4vw, 1.2rem)', borderRadius: '100px', margin: '0 auto' }}>
                 <Play fill="white" size={20} /> Analyze Now
               </button>
             </div>
@@ -109,7 +109,7 @@ const LandingPage = ({ onStart }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + i * 0.1 }}
-              style={{ padding: '40px', textAlign: 'left', display: 'flex', flexDirection: 'column' }}
+              style={{ padding: 'clamp(24px, 5vw, 40px)', textAlign: 'left', display: 'flex', flexDirection: 'column' }}
             >
               <div style={{ 
                 color: 'var(--primary)', 

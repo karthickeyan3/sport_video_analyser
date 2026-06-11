@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 
-const AnimatedRadarChart = ({ history, sportConfig }) => {
+const AnimatedRadarChart = ({ history, sportConfig, isFinished }) => {
   const [beamAngle, setBeamAngle] = useState(0);
   const requestRef = useRef();
 
@@ -17,7 +17,8 @@ const AnimatedRadarChart = ({ history, sportConfig }) => {
   const profile = useMemo(() => {
     if (!history || history.length < 2 || !sportConfig) return null;
 
-    const data = history.slice(-60);
+    // Use full history for final summary, or slice for real-time window
+    const data = isFinished ? history : history.slice(-60);
     const current = history[history.length - 1];
     const labels = sportConfig.radarLabels || ['POWER', 'SPEED', 'FORM', 'STABILITY', 'BALANCE', 'CORE'];
 
@@ -37,32 +38,34 @@ const AnimatedRadarChart = ({ history, sportConfig }) => {
       
       const lbl = label.toUpperCase();
       if (lbl.includes('SYMMETRY')) {
-        const diff = Math.abs(getVal('knee_angle_r') - getVal('knee_angle_l'));
+        const diff = Math.abs(getVal('knee_angle_r', 'avg') - getVal('knee_angle_l', 'avg'));
         score = Math.max(0, 100 - diff * 2.5);
       } 
       else if (lbl.includes('POWER') || lbl.includes('LIFT') || lbl.includes('DRIVE')) {
         const isJump = sportConfig.name.toLowerCase().includes('jump');
-        const vel = getVal('v_velocity', 'max');
+        // If finished, use average velocity, else use max for "peak" feeling
+        const vel = isFinished ? getVal('v_velocity', 'avg') : getVal('v_velocity', 'max');
         score = Math.min(100, (vel / (isJump ? 3.5 : 10)) * 100);
       }
       else if (lbl.includes('SPEED')) {
         const isJump = sportConfig.name.toLowerCase().includes('jump');
-        const vel = getVal('h_velocity', 'max');
+        const vel = isFinished ? getVal('h_velocity', 'avg') : getVal('h_velocity', 'max');
         score = Math.min(100, (vel / (isJump ? 9 : 12)) * 100);
       }
       else if (lbl.includes('CADENCE') || lbl.includes('RHYTHM')) {
-        score = Math.min(100, (current.cadence / 180) * 100);
+        const cad = isFinished ? getVal('cadence', 'avg') : (current.cadence || 0);
+        score = Math.min(100, (cad / 180) * 100);
       }
       else if (lbl.includes('EFFICIENCY') || lbl.includes('AERO')) {
-        const osc = getVal('vert_osc');
+        const osc = getVal('vert_osc', 'avg');
         score = Math.max(0, 100 - osc * 800);
       }
       else if (lbl.includes('POSTURE') || lbl.includes('ALIGNMENT') || lbl.includes('LEAN')) {
-        const lean = Math.abs(current.body_lean || 0);
+        const lean = Math.abs(isFinished ? getVal('body_lean', 'avg') : (current.body_lean || 0));
         score = Math.max(0, 100 - Math.abs(lean - 10) * 5);
       }
       else if (lbl.includes('STABILITY') || lbl.includes('BALANCE')) {
-        const swing = Math.abs(getVal('arm_swing_r') - getVal('arm_swing_l'));
+        const swing = Math.abs(getVal('arm_swing_r', 'avg') - getVal('arm_swing_l', 'avg'));
         score = Math.max(0, 100 - swing * 1.5);
       }
       else {

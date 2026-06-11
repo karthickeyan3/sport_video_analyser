@@ -8,6 +8,8 @@ import { SPORTS_CONFIG } from '../utils/sportsConfig';
 import SportSelector from '../components/SportSelector';
 import ParameterSelector from '../components/ParameterSelector';
 import MultiParameterView from '../components/MultiParameterView';
+import ComparisonView from './ComparisonView';
+import { GitCompare } from 'lucide-react';
 
 const AnalysisPage = ({ onBack }) => {
   const [videoFile, setVideoFile] = useState(null);
@@ -253,7 +255,7 @@ const AnalysisPage = ({ onBack }) => {
 
 
   return (
-    <div className="max-width-container" style={{ padding: '32px 24px', flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <div className="max-width-container" style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
       
       {/* Waveform Dashboard View (Overlay) */}
       <div style={{ display: viewMode === 'DASHBOARD' ? 'block' : 'none', width: '100%', height: '100%' }}>
@@ -266,23 +268,24 @@ const AnalysisPage = ({ onBack }) => {
         />
       </div>
 
-      {/* Main Analysis View */}
-      <div style={{ display: viewMode === 'MAIN' ? 'flex' : 'none', flexDirection: 'column', width: '100%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <button onClick={onBack} style={{ 
-          background: 'none', 
-          border: 'none', 
-          color: 'rgba(255,255,255,0.6)', 
-          padding: '8px 0',
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '8px', 
-          cursor: 'pointer'
-        }}>
-          <ArrowLeft size={18} /> Back to Landing
-        </button>
+      {/* Shared Toolbar for MAIN and COMPARE views */}
+      {(viewMode === 'MAIN' || viewMode === 'COMPARE') && (
+        <div className="max-width-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+          <button onClick={onBack} style={{ 
+            background: 'none', 
+            border: 'none', 
+            color: 'rgba(255,255,255,0.6)', 
+            padding: '8px 0',
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px', 
+            cursor: 'pointer',
+            fontSize: 'clamp(0.8rem, 3vw, 0.9rem)'
+          }}>
+            <ArrowLeft size={18} /> Back
+          </button>
 
-        <div style={{ display: 'flex', gap: '12px', zIndex: 50 }}>
+        <div style={{ display: 'flex', gap: '8px', zIndex: 50, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           
           <SportSelector 
             value={selectedSport} 
@@ -290,9 +293,12 @@ const AnalysisPage = ({ onBack }) => {
               setSelectedSport(val);
               setSelectedParam(activeConfig[val].metrics[0].key);
               trackerRef.current = new BiomechanicsTracker(val);
+              if (val !== 'RUNNING' && viewMode === 'COMPARE') {
+                setViewMode('MAIN');
+              }
             }}
             config={activeConfig}
-          />   
+          /> 
           {/* 
           <ParameterSelector 
             metrics={currentSportConfig.metrics} 
@@ -308,14 +314,14 @@ const AnalysisPage = ({ onBack }) => {
               background: 'rgba(0, 229, 255, 0.05)', 
               border: '1px solid rgba(0, 229, 255, 0.2)', 
               color: 'var(--primary)', 
-              padding: '10px 20px', 
+              padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px)', 
               borderRadius: '10px', 
-              fontSize: '0.85rem',
+              fontSize: 'clamp(0.75rem, 2.5vw, 0.85rem)',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '10px',
+              gap: '8px',
               transition: 'all 0.2s ease'
             }}
             className="hover-fade"
@@ -323,44 +329,78 @@ const AnalysisPage = ({ onBack }) => {
             <Grid size={16} /> Dashboard
           </button>
 
+          {selectedSport === 'RUNNING' && (
+            <button 
+              onClick={() => setViewMode(viewMode === 'COMPARE' ? 'MAIN' : 'COMPARE')}
+              style={{ 
+                background: viewMode === 'COMPARE' ? 'rgba(255, 179, 0, 0.2)' : 'rgba(255, 179, 0, 0.05)', 
+                border: viewMode === 'COMPARE' ? '1px solid #ffb300' : '1px solid rgba(255, 179, 0, 0.2)', 
+                color: '#ffb300', 
+                padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px)', 
+                borderRadius: '10px', 
+                fontSize: 'clamp(0.75rem, 2.5vw, 0.85rem)',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.2s ease'
+              }}
+              className="hover-fade"
+            >
+              <GitCompare size={16} /> {viewMode === 'COMPARE' ? 'Close' : 'Compare'}
+            </button>
+          )}
+
           <button 
             onClick={resetAnalysis}
             style={{ 
               background: 'rgba(255,255,255,0.05)', 
               border: '1px solid rgba(255,255,255,0.1)', 
               color: 'rgba(255,255,255,0.8)', 
-              padding: '10px 20px', 
+              padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px)', 
               borderRadius: '10px', 
-              fontSize: '0.9rem',
+              fontSize: 'clamp(0.75rem, 2.5vw, 0.9rem)',
               fontWeight: 500,
               cursor: 'pointer', 
               display: 'flex', 
               alignItems: 'center', 
-              gap: '8px',
+              gap: '6px',
               transition: 'all 0.2s ease'
             }}
             className="hover-fade"
           >
-            <RefreshCcw size={16} /> New Analysis
+            <RefreshCcw size={16} /> New
           </button>
+          </div>
         </div>
+      )}
+
+      {/* Comparison View */}
+      <div style={{ display: viewMode === 'COMPARE' ? 'block' : 'none', width: '100%', flex: 1 }}>
+        {selectedSport === 'RUNNING' && <ComparisonView />}
       </div>
 
-      <div className="analysis-vertical-flow" style={{ display: 'flex', flexDirection: 'column', gap: '40px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+      {/* Main Analysis View */}
+      <div style={{ display: viewMode === 'MAIN' ? 'flex' : 'none', flexDirection: 'column', width: '100%' }}>
+        <div className="analysis-vertical-flow" style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         
         {/* Top Split Section: Video vs Graph */}
         <div className="analysis-grid">
           {/* Left: Video Section */}
           <section className="video-section">
-            <div className="glass-card" style={{ padding: '16px', height: '560px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+            <div className="glass-card" style={{ padding: 'clamp(12px, 3vw, 16px)', flex: 1, display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                 <div style={{ width: '3px', height: '16px', background: 'var(--primary)' }}></div>
-                <h3 style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '1px' }}>REAL-TIME AI VISION</h3>
+                <h3 style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '1px' }}>AI VISION</h3>
               </div>
               
-              <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', borderRadius: '12px', overflow: 'hidden' }}>
+              <div className={`video-container-wrapper ${videoAspect < 1 ? 'portrait' : ''}`} style={{ 
+                aspectRatio: videoAspect || '16/9',
+                maxHeight: videoAspect < 1 ? '450px' : 'none'
+              }}>
                 {!videoFile ? (
-                  <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ padding: '40px', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <Upload size={48} style={{ marginBottom: '16px', color: 'var(--primary)' }} />
                     <label className="glow-btn" style={{ cursor: 'pointer', padding: '12px 32px' }}>
                        <span>Browse Video</span>
@@ -368,20 +408,20 @@ const AnalysisPage = ({ onBack }) => {
                     </label>
                   </div>
                 ) : (
-                  <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <>
                     <video 
                       ref={videoRef} 
                       src={videoFile} 
                       playsInline 
                       muted 
-                      style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain' }} 
+                      style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'contain' }} 
                       onLoadedMetadata={onVideoLoad} 
                     />
                     <canvas 
                       ref={canvasRef} 
                       style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }} 
                     />
-                  </div>
+                  </>
                 )}
               </div>
             </div>
@@ -389,15 +429,19 @@ const AnalysisPage = ({ onBack }) => {
 
           {/* Right: Graph Section */}
           <section className="graph-section">
-            <div className="glass-card" style={{ padding: '24px', height: '560px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+            <div className="glass-card" style={{ padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', height: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                 <div style={{ width: '3px', height: '16px', background: 'var(--primary)' }}></div>
-                <h3 style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '1px' }}>ATHLETIC SIGNATURE RADAR</h3>
+                <h3 style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '1px' }}>BIOMETRIC RADAR</h3>
               </div>
               
-              <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.01)', borderRadius: '12px' }}>
+              <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.01)', borderRadius: '12px', minHeight: '280px' }}>
                 {(isAnalyzing || progress === 100) && trackerRef.current.history.length > 0 ? (
-                  <LiveAnalysisGraph history={[...trackerRef.current.history]} sportConfig={currentSportConfig} />
+                  <LiveAnalysisGraph 
+                    history={[...trackerRef.current.history]} 
+                    sportConfig={currentSportConfig} 
+                    isFinished={progress === 100 && !isAnalyzing}
+                  />
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.15)', textAlign: 'center' }}>
                     <Activity size={48} style={{ marginBottom: '16px', opacity: 0.5 }} className={isAnalyzing ? "spinning" : ""} />
@@ -414,29 +458,29 @@ const AnalysisPage = ({ onBack }) => {
 
         {/* AI Controls Section (Separate Bar) */}
         {videoFile && (
-          <div className="glass-card" style={{ padding: '20px 32px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '32px', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
-            <div style={{ flex: '0 0 auto' }}>
+          <div className="glass-card" style={{ padding: '12px 20px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '20px', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
+            <div style={{ flex: '1 0 220px' }}>
               {!isAnalyzing ? (
-                <button onClick={startAnalysis} className="glow-btn" style={{ minWidth: '220px' }}>
-                  <Play size={18} fill="white" /> Start AI Analysis
+                <button onClick={startAnalysis} className="glow-btn" style={{ width: '100%', minWidth: 'unset' }}>
+                  <Play size={18} fill="currentColor" /> Start AI Analysis
                 </button>
               ) : (
-                <button onClick={stopAnalysis} style={{ background: 'rgba(255,100,100,0.1)', border: '1px solid rgba(255,100,100,0.3)', color: '#ff6b6b', padding: '12px 32px', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', minWidth: '220px', fontWeight: 700 }}>
+                <button onClick={stopAnalysis} style={{ width: '100%', background: 'rgba(255,100,100,0.1)', border: '1px solid rgba(255,100,100,0.3)', color: '#ff6b6b', padding: '12px 24px', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontWeight: 700, transition: 'all 0.2s' }}>
                   <Pause size={18} fill="#ff6b6b" /> Stop tracking
                 </button>
               )}
             </div>
             
-            <div style={{ flex: 1, minWidth: '250px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600, letterSpacing: '0.5px' }}>
-                <span>ENGINE STATUS: {isAnalyzing ? 'TRACKING ACTIVE' : 'SYSTEM READY'}</span>
-                <span>{Math.round(progress)}% COMPLETE</span>
+            <div style={{ flex: '1 1 300px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600, letterSpacing: '0.5px' }}>
+                <span>ENGINE: {isAnalyzing ? 'TRACKING' : 'READY'}</span>
+                <span>{Math.round(progress)}%</span>
               </div>
               <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
                 <motion.div 
-                  initial={{ width: 0 }} 
-                  animate={{ width: `${progress}%` }} 
-                  style={{ height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--secondary))', boxShadow: '0 0 10px var(--primary)' }} 
+                   initial={{ width: 0 }} 
+                   animate={{ width: `${progress}%` }} 
+                   style={{ height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--secondary))', boxShadow: '0 0 10px var(--primary)' }} 
                 />
               </div>
             </div>
@@ -446,13 +490,13 @@ const AnalysisPage = ({ onBack }) => {
         {/* 3. Live Metrics Section */}
         <section className="metrics-grid-section">
           <div className="glass-card" style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Activity color="var(--primary)" size={20} />
-                <h3 style={{ margin: 0 }}>Real-Time Biometrics</h3>
+                <h3 style={{ margin: 0, fontSize: '1rem' }}>Real-Time Biometrics</h3>
               </div>
             </div>
-            <div className="metrics-row" style={{ marginBottom: '32px' }}>
+            <div className="metrics-row" style={{ marginBottom: '16px' }}>
               {currentSportConfig.metrics.map((m, i) => {
                 const val = metrics ? metrics[m.key] : null;
                 const isMistake = metrics && !metrics.isSummary && (
@@ -467,7 +511,7 @@ const AnalysisPage = ({ onBack }) => {
                     style={{ 
                       display: 'flex', 
                       justifyContent: 'space-between', 
-                      padding: '16px', 
+                      padding: '12px', 
                       background: selectedParam === m.key ? `rgba(${selectedSport === 'RUNNING' ? '0, 229, 255' : '74, 222, 128'}, 0.1)` : 'rgba(255,255,255,0.02)', 
                       borderRadius: '12px', 
                       border: '1px solid',

@@ -53,8 +53,24 @@
 /* Responsive Grid layouts */
 .analysis-grid {
   display: grid;
-  grid-template-columns: 1fr 450px;
-  gap: 24px;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.video-container-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.video-container-wrapper.portrait {
+  aspect-ratio: 9 / 16;
+  max-height: 50vh; /* Reduced from 70vh */
+  margin: 0 auto;
 }
 
 @media (max-width: 1100px) {
@@ -84,6 +100,14 @@
   .max-width-container {
     padding-left: 16px !important;
     padding-right: 16px !important;
+  }
+  
+  .analysis-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .glow-btn {
+    padding: 12px 20px !important;
   }
   
   .admin-layout {
